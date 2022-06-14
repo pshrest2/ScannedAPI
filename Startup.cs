@@ -2,20 +2,15 @@ using Azure;
 using Azure.AI.FormRecognizer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using RSMessageProcessor;
 using ScannedAPI.Services;
 using ScannedAPI.Services.Interfaces;
 using ScannedAPI.SignalR;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ScannedAPI
 {
@@ -51,13 +46,13 @@ namespace ScannedAPI
                 });
             });
 
-            services.AddSingleton<IFormRecognizer>(x =>
+            services.AddSingleton<IFormRecognizerService>(x =>
             {
                 var credential = new AzureKeyCredential(Configuration.GetValue<string>("FormRecognizerApiKey"));
                 var client = new FormRecognizerClient(new Uri(Configuration.GetValue<string>("FormRecognizerEndpoint")), credential);
-                return new FormRecognizer(client);
+                return new FormRecognizerService(client);
             });
-
+            services.AddMessageProcessor();
             services.AddSignalR();
         }
 
@@ -65,15 +60,13 @@ namespace ScannedAPI
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCors("CorsPolicy");
-
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ScannedAPI v1"));
             }
-
-            // app.UseHttpsRedirection();
 
             app.UseRouting();
 

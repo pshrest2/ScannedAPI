@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using ScannedAPI.Services.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ScannedAPI.Controllers
@@ -13,9 +10,9 @@ namespace ScannedAPI.Controllers
     [Route("api/[controller]/[action]")]
     public class FormRecognizerController : ControllerBase
     {
-        private readonly IFormRecognizer _formRecognizer;
+        private readonly IFormRecognizerService _formRecognizer;
 
-        public FormRecognizerController(IFormRecognizer formRecognizer)
+        public FormRecognizerController(IFormRecognizerService formRecognizer)
         {
             _formRecognizer = formRecognizer ?? throw new ArgumentNullException(nameof(formRecognizer));
         }

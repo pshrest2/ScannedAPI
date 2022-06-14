@@ -1,9 +1,7 @@
 ﻿using Azure;
 using Azure.AI.FormRecognizer;
 using Azure.AI.FormRecognizer.Models;
-using Azure.AI.FormRecognizer.Training;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using ScannedAPI.Dtos;
 using ScannedAPI.Services.Interfaces;
 using System;
@@ -13,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace ScannedAPI.Services
 {
-    public class FormRecognizer : IFormRecognizer
+    public class FormRecognizerService : IFormRecognizerService
     {
         private FormRecognizerClient _client;
 
-        public FormRecognizer(FormRecognizerClient client)
+        public FormRecognizerService(FormRecognizerClient client)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
         }
