@@ -7,7 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using RSMessageProcessor;
+using RSMessageProcessor.Kafka.Interface;
 using ScannedAPI.Services;
+using ScannedAPI.Services.Handlers;
 using ScannedAPI.Services.Interfaces;
 using ScannedAPI.SignalR;
 using System;
@@ -53,6 +55,7 @@ namespace ScannedAPI
                 return new FormRecognizerService(client);
             });
             services.AddMessageProcessor();
+            services.AddHostedService<UploadImageService>();
             services.AddSignalR();
         }
 
