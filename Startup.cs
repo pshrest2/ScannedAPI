@@ -1,5 +1,6 @@
 using Azure;
 using Azure.AI.FormRecognizer;
+using Confluent.Kafka;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -54,7 +55,21 @@ namespace ScannedAPI
                 var client = new FormRecognizerClient(new Uri(Configuration.GetValue<string>("FormRecognizerEndpoint")), credential);
                 return new FormRecognizerService(client);
             });
-            services.AddMessageProcessor();
+            var clientConfig = new ClientConfig()
+            {
+                BootstrapServers = Configuration["Kafka:ClientConfigs:BootstrapServers"]
+            };
+
+            var consumerConfig = new ConsumerConfig(clientConfig)
+            {
+                GroupId = "SourceApp",
+                EnableAutoCommit = true,
+                AutoOffsetReset = AutoOffsetReset.Earliest,
+                StatisticsIntervalMs = 5000,
+                SessionTimeoutMs = 6000
+            };
+            services.AddKafkaConsumer(consumerConfig);
+            services.AddScoped<IKafkaHandler<string, string>, UploadImageHandler>();
             services.AddHostedService<UploadImageService>();
             services.AddSignalR();
         }
