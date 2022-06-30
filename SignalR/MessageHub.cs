@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ScannedAPI.SignalR
 {
-    public class MessageHub : Hub<IImageClient>, IMessageHub
+    public class MessageHub : Hub<IImageClient>
     {
         public async Task UploadImage(string uri)
         {

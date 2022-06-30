@@ -13,7 +13,7 @@ namespace ScannedAPI.Services
 {
     public class FormRecognizerService : IFormRecognizerService
     {
-        private FormRecognizerClient _client;
+        private readonly FormRecognizerClient _client; 
 
         public FormRecognizerService(FormRecognizerClient client)
         {
@@ -28,13 +28,12 @@ namespace ScannedAPI.Services
             return receiptDto;
         }
 
-        private ReceiptDto GetReceiptData(RecognizedFormCollection receipts)
+        private static ReceiptDto GetReceiptData(RecognizedFormCollection receipts)
         {
-            ReceiptDto receiptDto = new ReceiptDto();
+            ReceiptDto receiptDto = new();
             foreach (RecognizedForm receipt in receipts)
             {
-                FormField merchantNameField;
-                if (receipt.Fields.TryGetValue("MerchantName", out merchantNameField))
+                if (receipt.Fields.TryGetValue("MerchantName", out FormField merchantNameField))
                 {
                     if (merchantNameField.Value.ValueType == FieldValueType.String)
                     {
@@ -45,8 +44,7 @@ namespace ScannedAPI.Services
                     }
                 }
 
-                FormField transactionDateField;
-                if (receipt.Fields.TryGetValue("TransactionDate", out transactionDateField))
+                if (receipt.Fields.TryGetValue("TransactionDate", out FormField transactionDateField))
                 {
                     if (transactionDateField.Value.ValueType == FieldValueType.Date)
                     {
@@ -57,8 +55,7 @@ namespace ScannedAPI.Services
                     }
                 }
 
-                FormField itemsField;
-                if (receipt.Fields.TryGetValue("Items", out itemsField))
+                if (receipt.Fields.TryGetValue("Items", out FormField itemsField))
                 {
                     if (itemsField.Value.ValueType == FieldValueType.List)
                     {
@@ -71,8 +68,7 @@ namespace ScannedAPI.Services
                             {
                                 IReadOnlyDictionary<string, FormField> itemFields = itemField.Value.AsDictionary();
 
-                                FormField itemNameField;
-                                if (itemFields.TryGetValue("Name", out itemNameField))
+                                if (itemFields.TryGetValue("Name", out FormField itemNameField))
                                 {
                                     if (itemNameField.Value.ValueType == FieldValueType.String)
                                     {
@@ -83,8 +79,7 @@ namespace ScannedAPI.Services
                                     }
                                 }
 
-                                FormField itemTotalPriceField;
-                                if (itemFields.TryGetValue("TotalPrice", out itemTotalPriceField))
+                                if (itemFields.TryGetValue("TotalPrice", out FormField itemTotalPriceField))
                                 {
                                     if (itemTotalPriceField.Value.ValueType == FieldValueType.Float)
                                     {
@@ -100,8 +95,7 @@ namespace ScannedAPI.Services
                         }
                     }
                 }
-                FormField totalField;
-                if (receipt.Fields.TryGetValue("Total", out totalField))
+                if (receipt.Fields.TryGetValue("Total", out FormField totalField))
                 {
                     if (totalField.Value.ValueType == FieldValueType.Float)
                     {
