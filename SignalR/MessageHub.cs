@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using ScannedAPI.SignalR.Interfaces;
-using ScannedAPI.SignalR.MessageModel;
 using System.Threading.Tasks;
 
 namespace ScannedAPI.SignalR
 {
-    public class MessageHub : Hub<IImageClient>
+    public class MessageHub : Hub<IImageClient>, IMessageHub
     {
-        public async Task UploadImage(ImageMessage message)
+        public async Task UploadImage(string uri)
         {
-            await Clients.All.ReceiveImage(message);
+            await Clients.All.ReceiveImage(uri);
         }
     }
 }

@@ -5,6 +5,6 @@ namespace ScannedAPI.SignalR.Interfaces
 {
     public interface IImageClient
     {
-        Task ReceiveImage(ImageMessage message);
+        Task ReceiveImage(string uri);
     }
 }

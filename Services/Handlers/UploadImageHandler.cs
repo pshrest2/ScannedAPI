@@ -1,4 +1,7 @@
-﻿using RSMessageProcessor.Kafka.Interface;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
+using RSMessageProcessor.Kafka.Interface;
+using ScannedAPI.SignalR.Interfaces;
 using System;
 using System.Threading.Tasks;
 
@@ -6,13 +9,19 @@ namespace ScannedAPI.Services.Handlers
 {
     public class UploadImageHandler : IKafkaHandler<string, string>
     {
-        public Task HandleAsync(string key, string value)
+        private readonly IMessageHub _messageHub;
+
+        public UploadImageHandler(IMessageHub messageHub)
+        {
+            _messageHub = messageHub;
+        }
+
+        public async Task HandleAsync(string key, string value)
         {
             // Here we can actually write the code to register a User  
-            Console.WriteLine($"Consuming receipt-image topic message with the below data\n value: {value}");
+            Console.WriteLine($"Consuming receipt-image URI: {value}");
 
-            // after receiving image data, use signalR to send it to the React App.
-            return Task.CompletedTask;
+            await _messageHub.UploadImage(value);
         }
     }
 }
