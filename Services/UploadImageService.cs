@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
-using RSMessageProcessor.Kafka.Interface;
+﻿using Microsoft.Extensions.Hosting;
+using RSMessageProcessor.RabbitMQ.Interface;
 using System;
 using System.Net;
 using System.Threading;
@@ -10,21 +9,22 @@ namespace ScannedAPI.Services
 {
     public class UploadImageService : BackgroundService
     {
-        private readonly string topic = "receipt-image";
-        private readonly IKafkaConsumer<string, string> _kafkaConsumer;
-        public UploadImageService(IKafkaConsumer<string, string> kafkaConsumer)
+        private readonly IRabbitConsumer<string> _rabbitConsumer;
+
+        public UploadImageService(IRabbitConsumer<string> rabbitConsumer)
         {
-            _kafkaConsumer = kafkaConsumer;
+            _rabbitConsumer = rabbitConsumer;
         }
+
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             try
             {
-                await _kafkaConsumer.Consume(topic, cancellationToken);
+                await _rabbitConsumer.ConsumeMessage("ReceiptImage", cancellationToken);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"{(int)HttpStatusCode.InternalServerError} ConsumeFailedOnTopic - {topic}, {ex}");
+                Console.WriteLine($"{(int)HttpStatusCode.InternalServerError}: {ex}");
             }
         }
     }

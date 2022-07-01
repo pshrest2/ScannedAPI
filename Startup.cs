@@ -1,15 +1,13 @@
 using Azure;
 using Azure.AI.FormRecognizer;
-using Confluent.Kafka;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using RSMessageProcessor;
-using RSMessageProcessor.Kafka.Interface;
+using RSMessageProcessor.RabbitMQ.Interface;
 using ScannedAPI.Services;
 using ScannedAPI.Services.Handlers;
 using ScannedAPI.Services.Interfaces;
@@ -56,21 +54,11 @@ namespace ScannedAPI
                 var client = new FormRecognizerClient(new Uri(Configuration.GetValue<string>("FormRecognizerEndpoint")), credential);
                 return new FormRecognizerService(client);
             });
-            var clientConfig = new ClientConfig()
-            {
-                BootstrapServers = Configuration["Kafka:ClientConfigs:BootstrapServers"]
-            };
 
-            var consumerConfig = new ConsumerConfig(clientConfig)
-            {
-                GroupId = "SourceApp",
-                EnableAutoCommit = true,
-                AutoOffsetReset = AutoOffsetReset.Earliest,
-                StatisticsIntervalMs = 5000,
-                SessionTimeoutMs = 6000
-            };
-            services.AddKafkaConsumer(consumerConfig);
-            services.AddScoped<IKafkaHandler<string, string>, UploadImageHandler>();
+            var rabbitConfig = Configuration.GetSection("Rabbit");
+
+            services.AddRabbitConsumer(rabbitConfig);
+            services.AddScoped<IRabbitHandler<string>, UploadImageHandler>();
             services.AddHostedService<UploadImageService>();
             services.AddSignalR();
         }

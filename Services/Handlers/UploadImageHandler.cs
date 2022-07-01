@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using RSMessageProcessor.Kafka.Interface;
+using RSMessageProcessor.RabbitMQ.Interface;
 using ScannedAPI.SignalR;
 using ScannedAPI.SignalR.Interfaces;
 using System;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ScannedAPI.Services.Handlers
 {
-    public class UploadImageHandler : IKafkaHandler<string, string>
+    public class UploadImageHandler : IRabbitHandler<string>
     {
         private readonly IHubContext<MessageHub, IImageClient> _hubContext;
 
@@ -16,12 +16,12 @@ namespace ScannedAPI.Services.Handlers
             _hubContext = hubContext;
         }
 
-        public async Task HandleAsync(string key, string value)
+        public async Task HandleAsync(string message)
         {
             // Here we can actually write the code to register a User  
-            Console.WriteLine($"Consuming receipt-image URI: {value}");
+            Console.WriteLine($"Consuming receipt-image URI: {message}");
 
-            await _hubContext.Clients.All.ReceiveImage(value);
+            await _hubContext.Clients.All.ReceiveImage(message);
         }
     }
 }
