@@ -23,9 +23,14 @@ namespace ScannedAPI.Services
         public async Task<ReceiptDto> AnalyzeReceipt(IFormFile file)
         {
             Stream fileStream = file.OpenReadStream();
-            var receipts = await _client.StartRecognizeReceipts(fileStream).WaitForCompletionAsync();
-            var receiptDto = GetReceiptData(receipts);
-            return receiptDto;
+            var receiptData = await _client.StartRecognizeReceiptsAsync(fileStream).WaitForCompletionAsync();
+            return GetReceiptData(receiptData);
+        }
+
+        public async Task<ReceiptDto> AnalyzeReceipt(string url)
+        {
+            var receiptData = await _client.StartRecognizeReceiptsFromUriAsync(new Uri(url)).WaitForCompletionAsync();
+            return GetReceiptData(receiptData);
         }
 
         private static ReceiptDto GetReceiptData(RecognizedFormCollection receipts)

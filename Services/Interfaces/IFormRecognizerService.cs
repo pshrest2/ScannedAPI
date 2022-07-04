@@ -7,5 +7,6 @@ namespace ScannedAPI.Services.Interfaces
     public interface IFormRecognizerService
     {
         Task<ReceiptDto> AnalyzeReceipt(IFormFile file);
+        Task<ReceiptDto> AnalyzeReceipt(string url);
     }
 }

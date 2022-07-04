@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ScannedAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("api/form-recognizer")]
     public class FormRecognizerController : ControllerBase
     {
         private readonly IFormRecognizerService _formRecognizer;
@@ -18,9 +18,18 @@ namespace ScannedAPI.Controllers
         }
 
         [HttpPost]
+        [Route("upload/file")]
         public async Task<IActionResult> Upload(IFormFile file)
         {
             var result = await _formRecognizer.AnalyzeReceipt(file);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("upload/url")]
+        public async Task<IActionResult> Upload([FromBody] string url)
+        {
+            var result = await _formRecognizer.AnalyzeReceipt(url);
             return Ok(result);
         }
     }
