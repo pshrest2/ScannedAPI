@@ -14,9 +14,10 @@ namespace ScannedAPI.Dtos
 
         public string Merchant{ get; set; }
         public List<Item> Items { get; set; }
-        public float TaxAmount { get; set; }
+        public float TaxPercent { get; set; }
         public float SubTotal { get; set; }
         public float Total { get; set; }
+        public float Tip { get; set; }
         public DateTime TransactionDate { get; set; }
     }
 }

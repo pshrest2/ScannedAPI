@@ -110,6 +110,46 @@ namespace ScannedAPI.Services
                         Console.WriteLine($"Total: '{total}', with confidence '{totalField.Confidence}'");
                     }
                 }
+
+                if (receipt.Fields.TryGetValue("Subtotal", out FormField subTotalField))
+                {
+                    if (subTotalField.Value.ValueType == FieldValueType.Float)
+                    {
+                        float subTotal = subTotalField.Value.AsFloat();
+
+                        Console.WriteLine($"Total: '{subTotal}', with confidence '{subTotalField.Confidence}'");
+                    }
+                }
+
+                if (receipt.Fields.TryGetValue("Tax", out FormField taxAmount))
+                {
+                    if (taxAmount.Value.ValueType == FieldValueType.Float)
+                    {
+                        float totalTax = taxAmount.Value.AsFloat();
+
+                        try
+                        {
+                            receiptDto.TaxPercent = (float)Math.Round((totalTax * 100) / (subTotalField.Value.AsFloat()), 2);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine($"Subtotal field might not exist. Exception message: {e.Message}");
+                            receiptDto.TaxPercent = 0;
+                        }
+                        Console.WriteLine($"Total Tax: '{totalTax}', with confidence {taxAmount.Confidence}");
+                    }
+                }
+
+                if (receipt.Fields.TryGetValue("Tip", out FormField tipAmount))
+                {
+                    if (tipAmount.Value.ValueType == FieldValueType.Float)
+                    {
+                        float totalTip = tipAmount.Value.AsFloat();
+                        receiptDto.Tip = totalTip;
+
+                        Console.WriteLine($"Total Tip: '{totalTip}', with confidence {tipAmount.Confidence}");
+                    }
+                }
             }
             return receiptDto;
         }
