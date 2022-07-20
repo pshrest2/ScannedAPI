@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace ScannedAPI.Controllers
 {
-    [ApiController]
-    [Route("api/form-recognizer")]
-    public class FormRecognizerController : ControllerBase
+    [Route("form-recognizer")]
+    public class FormRecognizerController : CommonApiController
     {
         private readonly IFormRecognizerService _formRecognizer;
 

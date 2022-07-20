@@ -41,10 +41,10 @@ namespace ScannedAPI
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
                     policy
+                    .WithOrigins("https://receiptimages.z13.web.core.windows.net", "http://localhost:3000", "http://localhost:3001")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
-                    .AllowCredentials()
-                    .WithOrigins("https://receiptimages.z13.web.core.windows.net", "http://localhost:3000", "http://localhost:3001");
+                    .AllowCredentials();
                 });
             });
 
@@ -66,8 +66,6 @@ namespace ScannedAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors("CorsPolicy");
-            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -76,6 +74,8 @@ namespace ScannedAPI
             }
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 
