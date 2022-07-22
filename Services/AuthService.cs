@@ -20,6 +20,7 @@ namespace ScannedAPI.Services
         {
             var user = new User
             {
+                Id = Guid.NewGuid(),
                 FirstName = dto.FirstName,
                 MiddleName = dto.MiddleName,
                 LastName = dto.LastName,
@@ -27,8 +28,8 @@ namespace ScannedAPI.Services
                 Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 PartitionKey = dto.LastName
             };
-            var userId = await _authRepository.Register(user);
-            return userId;
+            await _authRepository.Register(user);
+            return user.Id;
         }
     }
 }

@@ -6,7 +6,7 @@ namespace ScannedAPI.Repositories.Interfaces
 {
     public interface IAuthRepository
     {
-        Task<Guid> Register(User user);
+        Task Register(User user);
     }
 }
 

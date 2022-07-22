@@ -24,11 +24,14 @@
     <None Remove="Microsoft.Azure.Cosmos" />
     <None Remove="BCrypt" />
     <None Remove="BCrypt.Net-Next" />
+    <None Remove="Repositories\Context\Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Dtos\AuthDtos\" />
     <Folder Include="Models\" />
     <Folder Include="Repositories\" />
     <Folder Include="Repositories\Interfaces\" />
+    <Folder Include="Repositories\Contexts\" />
+    <Folder Include="Repositories\Contexts\Interfaces\" />
   </ItemGroup>
 </Project>

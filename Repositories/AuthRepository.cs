@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
-using Microsoft.Azure.Cosmos;
+using ScannedAPI.Models;
+using ScannedAPI.Repositories.Contexts.Interfaces;
 using ScannedAPI.Repositories.Interfaces;
 using User = ScannedAPI.Models.User;
 
@@ -9,21 +9,21 @@ namespace ScannedAPI.Repositories
 {
     public class AuthRepository : IAuthRepository
     {
-        private readonly Container _container;
+        private readonly ICosmosDbContext _cosmosDbContext;
 
-        public AuthRepository(Container container)
+        public AuthRepository(ICosmosDbContext cosmosDbContext)
         {
-            _container = container;
+            _cosmosDbContext = cosmosDbContext;
         }
 
-        public async Task<Guid> Register(User user)
+        public async Task Register(User user)
         {
-            ItemResponse<User> registeredUser = await _container.CreateItemAsync(user, new PartitionKey(user.PartitionKey));
-
-            Console.WriteLine($@"Registerd user in database with id: {registeredUser.Resource.Id}
-            Operation consumed {registeredUser.RequestCharge} RUs.");
-
-            return registeredUser.Resource.Id;
+            await _cosmosDbContext.AddItemAsync(new ScannlyItem()
+            {
+                Id = Guid.NewGuid().ToString(),
+                User = user
+            });
+            Console.WriteLine($"{string.Concat(user.FirstName, user.MiddleName, user.LastName)} has been registered");
         }
     }
 }

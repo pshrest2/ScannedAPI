@@ -23,6 +23,7 @@ namespace ScannedAPI.Controllers
             try
             {
                 var userId = await _authService.Register(dto);
+                return Ok(userId);
             }
             catch(Exception e)
             {
