@@ -84,8 +84,10 @@ namespace ScannedAPI
             services.AddHostedService<UploadImageService>();
             services.AddSignalR();
 
-            services.AddTransient<IAuthService, AuthService>();
-            services.AddTransient<IAuthRepository, AuthRepository>();
+            services.AddTransient<IUsersService, UsersService>();
+
+            services.AddTransient<IUsersRepository, UsersRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
