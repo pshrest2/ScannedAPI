@@ -19,7 +19,7 @@ namespace ScannedAPI.Repositories.Context
 
         public async Task AddItemAsync(ScannlyItem item)
         {
-            await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
+            await _container.CreateItemAsync(item, new PartitionKey(item.PartitionKey));
         }
 
         public async Task DeleteItemAsync(string id)

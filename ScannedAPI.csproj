@@ -29,6 +29,7 @@
     <None Remove="Repositories\Context\Interfaces\" />
     <None Remove="AutoMapper" />
     <None Remove="AutoMapper.Extensions.Microsoft.DependencyInjection" />
+    <None Remove="Automapper\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Dtos\User\" />
@@ -37,5 +38,6 @@
     <Folder Include="Repositories\Interfaces\" />
     <Folder Include="Repositories\Contexts\" />
     <Folder Include="Repositories\Contexts\Interfaces\" />
+    <Folder Include="Automapper\" />
   </ItemGroup>
 </Project>

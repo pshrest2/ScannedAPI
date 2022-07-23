@@ -18,8 +18,6 @@ namespace ScannedAPI.Models
 
         public string Email { get; set; }
 
-        public string PartitionKey { get; set; }
-
         [JsonIgnore]
         public string Password { get; set; }
 

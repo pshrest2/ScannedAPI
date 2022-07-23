@@ -37,8 +37,17 @@ namespace ScannedAPI.Controllers
         {
             if (dto == null || string.IsNullOrEmpty(dto.Email) || string.IsNullOrEmpty(dto.Password))
                 return BadRequest("Login credentials cannot be empty");
+            try
+            {
+                var user = await _usersService.Get(dto);
+                if (user == null) throw new Exception("Invalid credentials");
 
-            return Ok();
+                return Ok(user);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }

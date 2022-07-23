@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoMapper;
 using ScannedAPI.Dtos.AuthDtos;
 using ScannedAPI.Dtos.User;
 using ScannedAPI.Models;
@@ -10,41 +11,32 @@ namespace ScannedAPI.Services
 {
     public class UsersService : IUsersService
     {
+        private readonly IMapper _mapper;
         private readonly IUsersRepository _usersRepository;
 
-        public UsersService(IUsersRepository usersRepository)
+        public UsersService(IMapper mapper, IUsersRepository usersRepository)
         {
+            _mapper = mapper;
             _usersRepository = usersRepository;
         }
 
         public async Task<UserDto> Get(LoginDto dto)
         {
-            dto.HashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
             var user = await _usersRepository.Get(dto);
-            if (user == null) throw new Exception("Invalid credentials");
-            return new UserDto()
-            {
-                Id = user.Id,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                MiddleName = user.MiddleName,
-                LastName = user.LastName,
-                Phone = user.Phone
-            };
+            if (user == null) throw new Exception("User does not exist");
+
+            var passwordMatches = BCrypt.Net.BCrypt.Verify(dto.Password, user.Password);
+            if (!passwordMatches) throw new Exception("Invalid Credentials");
+
+            return _mapper.Map<UserDto>(user);
         }
 
         public async Task<Guid> Register(RegisterDto dto)
         {
-            var user = new User
-            {
-                Id = Guid.NewGuid(),
-                FirstName = dto.FirstName,
-                MiddleName = dto.MiddleName,
-                LastName = dto.LastName,
-                Email = dto.Email,
-                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                PartitionKey = dto.LastName
-            };
+            var user = _mapper.Map<User>(dto);
+            user.Id = Guid.NewGuid();
+            user.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+
             await _usersRepository.Register(user);
             return user.Id;
         }

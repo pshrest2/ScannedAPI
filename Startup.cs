@@ -1,3 +1,4 @@
+using AutoMapper;
 using Azure;
 using Azure.AI.FormRecognizer;
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using RSMessageProcessor;
 using RSMessageProcessor.RabbitMQ.Interface;
+using ScannedAPI.Automapper;
 using ScannedAPI.Repositories;
 using ScannedAPI.Repositories.Context;
 using ScannedAPI.Repositories.Contexts.Interfaces;
@@ -42,7 +44,7 @@ namespace ScannedAPI
             var client = new CosmosClient(uri, key);
             var cosmosDbService = new CosmosDbContext(client, databaseName, containerName);
             var database = await client.CreateDatabaseIfNotExistsAsync(databaseName, 400);
-            await database.Database.CreateContainerIfNotExistsAsync(containerName, "/id");
+            await database.Database.CreateContainerIfNotExistsAsync(containerName, "/partitionKey");
 
             return cosmosDbService;
         }
@@ -70,9 +72,17 @@ namespace ScannedAPI
                 });
             });
 
+            // Auto Mapper Configurations
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
             var rabbitConfig = Configuration.GetSection("Rabbit");
             services.AddRabbitConsumer(rabbitConfig);
-
             services.AddSingleton<IFormRecognizerService>(x =>
             {
                 var credential = new AzureKeyCredential(Configuration.GetValue<string>("FormRecognizerApiKey"));

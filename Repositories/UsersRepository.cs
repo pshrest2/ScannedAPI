@@ -19,7 +19,9 @@ namespace ScannedAPI.Repositories
 
         public async Task<User> Get(LoginDto dto)
         {
-            var query = $@"SELECT * FROM scannlyItems si WHERE si.user.Email = {dto.Email} AND si.user.Password = {dto.HashedPassword}";
+            var query = $@"SELECT *
+                        FROM scannlyItems si
+                        WHERE si.user.Email = '{dto.Email}'";
             var scannlyItems = await _cosmosDbContext.GetItemsAsync(query);
             return scannlyItems.FirstOrDefault()?.User;
         }
@@ -29,6 +31,7 @@ namespace ScannedAPI.Repositories
             await _cosmosDbContext.AddItemAsync(new ScannlyItem()
             {
                 Id = Guid.NewGuid().ToString(),
+                PartitionKey = user.LastName,
                 User = user
             });
             Console.WriteLine($"{string.Concat(user.FirstName, user.MiddleName, user.LastName)} has been registered");

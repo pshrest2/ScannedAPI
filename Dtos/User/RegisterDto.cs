@@ -17,7 +17,7 @@ namespace ScannedAPI.Dtos.AuthDtos
 
         public string Password { get; set; }
 
-        public long Phone { get; set; }
+        public string Phone { get; set; }
     }
 }
 
