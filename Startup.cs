@@ -1,12 +1,14 @@
 using AutoMapper;
 using Azure;
 using Azure.AI.FormRecognizer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RSMessageProcessor;
 using RSMessageProcessor.RabbitMQ.Interface;
@@ -20,6 +22,7 @@ using ScannedAPI.Services.Handlers;
 using ScannedAPI.Services.Interfaces;
 using ScannedAPI.SignalR;
 using System;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ScannedAPI
@@ -41,7 +44,7 @@ namespace ScannedAPI
             var containerName = configurationSection.GetSection("ContainerName").Value;
             var uri = configurationSection.GetSection("Uri").Value;
             var key = configurationSection.GetSection("Key").Value;
-            var client = new CosmosClient(uri, key);
+            var client = new CosmosClient(uri, key, new CosmosClientOptions() { ConnectionMode = ConnectionMode.Gateway });
             var cosmosDbService = new CosmosDbContext(client, databaseName, containerName);
             var database = await client.CreateDatabaseIfNotExistsAsync(databaseName, 400);
             await database.Database.CreateContainerIfNotExistsAsync(containerName, "/partitionKey");
@@ -60,6 +63,19 @@ namespace ScannedAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ScannedAPI", Version = "v1" });
             });
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudience = Configuration["Jwt:Audience"],
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                };
+            });
             services.AddCors(opt =>
             {
                 opt.AddPolicy("CorsPolicy", policy =>
@@ -113,6 +129,8 @@ namespace ScannedAPI
             app.UseRouting();
 
             app.UseCors("CorsPolicy");
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

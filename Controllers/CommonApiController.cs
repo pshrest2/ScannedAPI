@@ -8,10 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace ScannedAPI.Controllers
 {
     [ApiController]
-    [Route("api")]
     public class CommonApiController : Controller
     {
-        
     }
 }
 

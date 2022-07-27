@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ScannedAPI.Services.Interfaces;
 using System;
@@ -6,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace ScannedAPI.Controllers
 {
-    [Route("form-recognizer")]
+    [Authorize]
+    [Route("api/form-recognizer")]
     public class FormRecognizerController : CommonApiController
     {
         private readonly IFormRecognizerService _formRecognizer;
