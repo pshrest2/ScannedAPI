@@ -18,6 +18,8 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.21.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="StackExchange.Redis" Version="2.6.48" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +36,9 @@
     <None Remove="Automapper\" />
     <None Remove="System.IdentityModel.Tokens.Jwt" />
     <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <None Remove="Newtonsoft.Json" />
+    <None Remove="StackExchange.Redis" />
+    <None Remove="Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Dtos\User\" />
@@ -43,5 +48,6 @@
     <Folder Include="Repositories\Contexts\" />
     <Folder Include="Repositories\Contexts\Interfaces\" />
     <Folder Include="Automapper\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
 </Project>

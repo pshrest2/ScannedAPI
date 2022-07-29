@@ -15,12 +15,14 @@ using RSMessageProcessor.RabbitMQ.Interface;
 using ScannedAPI.Automapper;
 using ScannedAPI.Repositories;
 using ScannedAPI.Repositories.Context;
+using ScannedAPI.Repositories.Contexts;
 using ScannedAPI.Repositories.Contexts.Interfaces;
 using ScannedAPI.Repositories.Interfaces;
 using ScannedAPI.Services;
 using ScannedAPI.Services.Handlers;
 using ScannedAPI.Services.Interfaces;
 using ScannedAPI.SignalR;
+using StackExchange.Redis;
 using System;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,6 +52,20 @@ namespace ScannedAPI
             await database.Database.CreateContainerIfNotExistsAsync(containerName, "/partitionKey");
 
             return cosmosDbService;
+        }
+
+        private RedisContext InitializeRedisInstance(IConfigurationSection configurationSection)
+        {
+            var config = configurationSection.GetSection("Config");
+            var multiplexer = ConnectionMultiplexer.Connect(config.Value);
+            return new RedisContext(multiplexer);
+        }
+
+        private FormRecognizerService InitializeFormRecognizer()
+        {
+            var credential = new AzureKeyCredential(Configuration.GetValue<string>("FormRecognizerApiKey"));
+            var client = new FormRecognizerClient(new Uri(Configuration.GetValue<string>("FormRecognizerEndpoint")), credential);
+            return new FormRecognizerService(client);
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -88,30 +104,28 @@ namespace ScannedAPI
                 });
             });
 
-            // Auto Mapper Configurations
             var mapperConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new MappingProfile());
             });
-
-            IMapper mapper = mapperConfig.CreateMapper();
-            services.AddSingleton(mapper);
-
+            var mapper = mapperConfig.CreateMapper();
             var rabbitConfig = Configuration.GetSection("Rabbit");
+
             services.AddRabbitConsumer(rabbitConfig);
-            services.AddSingleton<IFormRecognizerService>(x =>
-            {
-                var credential = new AzureKeyCredential(Configuration.GetValue<string>("FormRecognizerApiKey"));
-                var client = new FormRecognizerClient(new Uri(Configuration.GetValue<string>("FormRecognizerEndpoint")), credential);
-                return new FormRecognizerService(client);
-            });
-            services.AddSingleton<ICosmosDbContext>(InitializeCosmosClientInstanceAsync(Configuration.GetSection("CosmosDb")).GetAwaiter().GetResult());
-            services.AddScoped<IRabbitHandler<string>, UploadImageHandler>();
             services.AddHostedService<UploadImageService>();
             services.AddSignalR();
 
-            services.AddTransient<IUsersService, UsersService>();
+            // singleton
+            services.AddSingleton(mapper);
+            services.AddSingleton<IFormRecognizerService>(InitializeFormRecognizer());
+            services.AddSingleton<ICosmosDbContext>(InitializeCosmosClientInstanceAsync(Configuration.GetSection("CosmosDb")).GetAwaiter().GetResult());
+            services.AddSingleton<IRedisContext>(InitializeRedisInstance(Configuration.GetSection("Redis")));
 
+            // scoped
+            services.AddScoped<IRabbitHandler<string>, UploadImageHandler>();
+
+            // transient
+            services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<IUsersRepository, UsersRepository>();
 
         }

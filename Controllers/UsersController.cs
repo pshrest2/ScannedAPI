@@ -68,9 +68,16 @@ namespace ScannedAPI.Controllers
                     claims,
                     expires: DateTime.UtcNow.AddMinutes(10),
                     signingCredentials: signIn);
+                var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+                Response.Cookies.Append("jwt", jwtToken, new Microsoft.AspNetCore.Http.CookieOptions
+                {
+                    HttpOnly = true,
+                });
 
-
-                return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+                return Ok(new 
+                {
+                    message = "success"
+                });
             }
             catch (Exception e)
             {
