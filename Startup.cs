@@ -105,7 +105,6 @@ namespace ScannedAPI
             services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IUsersRepository, UsersRepository>();
-            services.AddTransient<IAuthRepository, AuthRepository>();
 
         }
 
