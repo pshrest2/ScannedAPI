@@ -1,31 +1,27 @@
 using AutoMapper;
 using Azure;
 using Azure.AI.FormRecognizer;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RSMessageProcessor;
 using RSMessageProcessor.RabbitMQ.Interface;
 using ScannedAPI.Automapper;
 using ScannedAPI.Repositories;
 using ScannedAPI.Repositories.Context;
-using ScannedAPI.Repositories.Contexts;
 using ScannedAPI.Repositories.Contexts.Interfaces;
 using ScannedAPI.Repositories.Interfaces;
 using ScannedAPI.Services;
 using ScannedAPI.Services.Handlers;
 using ScannedAPI.Services.Interfaces;
 using ScannedAPI.SignalR;
-using StackExchange.Redis;
 using System;
-using System.Text;
 using System.Threading.Tasks;
+using ScannedAPI.Extensions;
 
 namespace ScannedAPI
 {
@@ -54,13 +50,6 @@ namespace ScannedAPI
             return cosmosDbService;
         }
 
-        private RedisContext InitializeRedisInstance(IConfigurationSection configurationSection)
-        {
-            var config = configurationSection.GetSection("Config");
-            var multiplexer = ConnectionMultiplexer.Connect(config.Value);
-            return new RedisContext(multiplexer);
-        }
-
         private FormRecognizerService InitializeFormRecognizer()
         {
             var credential = new AzureKeyCredential(Configuration.GetValue<string>("FormRecognizerApiKey"));
@@ -79,19 +68,6 @@ namespace ScannedAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ScannedAPI", Version = "v1" });
             });
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-            {
-                options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidAudience = Configuration["Jwt:Audience"],
-                    ValidIssuer = Configuration["Jwt:Issuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-                };
-            });
             services.AddCors(opt =>
             {
                 opt.AddPolicy("CorsPolicy", policy =>
@@ -103,7 +79,8 @@ namespace ScannedAPI
                     .AllowCredentials();
                 });
             });
-
+             
+            // auto mapper
             var mapperConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new MappingProfile());
@@ -114,19 +91,21 @@ namespace ScannedAPI
             services.AddRabbitConsumer(rabbitConfig);
             services.AddHostedService<UploadImageService>();
             services.AddSignalR();
+            services.AddJWTTokenServices(Configuration);
 
             // singleton
             services.AddSingleton(mapper);
             services.AddSingleton<IFormRecognizerService>(InitializeFormRecognizer());
             services.AddSingleton<ICosmosDbContext>(InitializeCosmosClientInstanceAsync(Configuration.GetSection("CosmosDb")).GetAwaiter().GetResult());
-            services.AddSingleton<IRedisContext>(InitializeRedisInstance(Configuration.GetSection("Redis")));
 
             // scoped
             services.AddScoped<IRabbitHandler<string>, UploadImageHandler>();
 
             // transient
             services.AddTransient<IUsersService, UsersService>();
+            services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IUsersRepository, UsersRepository>();
+            services.AddTransient<IAuthRepository, AuthRepository>();
 
         }
 

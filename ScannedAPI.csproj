@@ -16,10 +16,10 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.21.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.22.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="StackExchange.Redis" Version="2.6.48" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.22.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +39,10 @@
     <None Remove="Newtonsoft.Json" />
     <None Remove="StackExchange.Redis" />
     <None Remove="Helpers\" />
+    <None Remove="Microsoft.Extensions.Caching.StackExchangeRedis" />
+    <None Remove="Microsoft.Extensions.Caching.Redis" />
+    <None Remove="Microsoft.IdentityModel.JsonWebTokens" />
+    <None Remove="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Dtos\User\" />
@@ -49,5 +53,6 @@
     <Folder Include="Repositories\Contexts\Interfaces\" />
     <Folder Include="Automapper\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
 </Project>
