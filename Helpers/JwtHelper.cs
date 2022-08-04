@@ -28,13 +28,12 @@ namespace ScannedAPI.Helpers
         {
             try
             {
-                var UserToken = new UserTokens();
                 if (model == null) throw new ArgumentException(nameof(model));
                 // Get secret key
                 var key = System.Text.Encoding.ASCII.GetBytes(jwtSettings.IssuerSigningKey);
                 Guid Id = Guid.Empty;
                 DateTime expireTime = DateTime.UtcNow.AddDays(1);
-                UserToken.Validity = expireTime.TimeOfDay;
+                model.Validity = expireTime.TimeOfDay;
                 var JWToken = new JwtSecurityToken(
                     issuer: jwtSettings.ValidIssuer,
                     audience: jwtSettings.ValidAudience,
@@ -42,9 +41,9 @@ namespace ScannedAPI.Helpers
                     notBefore: new DateTimeOffset(DateTime.Now).DateTime,
                     expires: new DateTimeOffset(expireTime).DateTime,
                     signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256));
-                UserToken.Token = new JwtSecurityTokenHandler().WriteToken(JWToken);
-                UserToken.Id = Id;
-                return UserToken;
+                model.Token = new JwtSecurityTokenHandler().WriteToken(JWToken);
+                model.Id = Id == default ? model.Id : Id;
+                return model;
             }
             catch (Exception)
             {

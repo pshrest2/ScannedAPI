@@ -34,21 +34,14 @@ namespace ScannedAPI.Controllers
                 var user = await _authService.ValidateUser(dto);
                 if (user == null) throw new Exception("Invalid credentials");
 
-                var token = JwtHelper.GenTokenkey(new UserTokens()
+                var userToken = JwtHelper.GenTokenkey(new UserTokens()
                 {
                     Email = user.Email,
                     UserId = user.Id,
+                    DisplayName = user.FirstName + " " + user.LastName
                 }, _jwtSettings);
 
-                Response.Cookies.Append("jwt", token.Token, new CookieOptions
-                {
-                    HttpOnly = true,
-                });
-
-                return Ok(new
-                {
-                    message = "success"
-                });
+                return Ok(userToken);
             }
             catch (Exception e)
             {
