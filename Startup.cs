@@ -72,8 +72,7 @@ namespace ScannedAPI
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy
-                    .AllowAnyOrigin()
+                    policy.WithOrigins("http://localhost:3000", "http://localhost:3001", "https://receiptimages.z13.web.core.windows.net")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials();
