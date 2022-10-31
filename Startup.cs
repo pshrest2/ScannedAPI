@@ -118,9 +118,9 @@ namespace ScannedAPI
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ScannedAPI v1"));
             }
 
-            app.UseRouting();
-
             app.UseCors("CorsPolicy");
+
+            app.UseRouting();
 
             app.UseAuthentication();
 
