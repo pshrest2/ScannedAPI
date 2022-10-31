@@ -33,6 +33,7 @@ namespace ScannedAPI
         }
 
         public IConfiguration Configuration { get; }
+        private static string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 
         // Creates a Cosmos DB database and a container with the specified partition key. 
@@ -60,23 +61,22 @@ namespace ScannedAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddControllers();
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ScannedAPI", Version = "v1" });
-            });
-
             services.AddCors(opt =>
             {
-                opt.AddPolicy("CorsPolicy", policy =>
+                opt.AddPolicy(MyAllowSpecificOrigins, policy =>
                 {
                     policy.WithOrigins("http://localhost:3000", "http://localhost:3001", "https://receiptimages.z13.web.core.windows.net")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials();
                 });
+            });
+
+            services.AddControllers();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ScannedAPI", Version = "v1" });
             });
              
             // auto mapper
@@ -117,9 +117,9 @@ namespace ScannedAPI
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ScannedAPI v1"));
             }
 
-            app.UseCors("CorsPolicy");
-
             app.UseRouting();
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseAuthentication();
 
