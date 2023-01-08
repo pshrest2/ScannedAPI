@@ -6,20 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.AI.FormRecognizer" Version="3.1.1" />
-    <PackageReference Include="Azure.Identity" Version="1.6.0" />
+    <PackageReference Include="Azure.AI.FormRecognizer" Version="4.0.0" />
+    <PackageReference Include="Azure.Identity" Version="1.8.0" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="RSMessageProcessor" Version="1.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.29.0" />
-    <PackageReference Include="BCrypt" Version="1.0.0" />
-    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-    <PackageReference Include="AutoMapper" Version="11.0.1" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.22.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.22.0" />
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.31.2" />
+    <PackageReference Include="AutoMapper" Version="12.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.25.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,7 +39,6 @@
     <None Remove="Microsoft.Extensions.Caching.StackExchangeRedis" />
     <None Remove="Microsoft.Extensions.Caching.Redis" />
     <None Remove="Microsoft.IdentityModel.JsonWebTokens" />
-    <None Remove="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Dtos\User\" />
@@ -53,6 +49,5 @@
     <Folder Include="Repositories\Contexts\Interfaces\" />
     <Folder Include="Automapper\" />
     <Folder Include="Helpers\" />
-    <Folder Include="Extensions\" />
   </ItemGroup>
 </Project>

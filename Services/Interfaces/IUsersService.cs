@@ -7,8 +7,6 @@ namespace ScannedAPI.Services.Interfaces
 {
     public interface IUsersService
     {
-        Task<UserDto> Get(LoginDto dto);
-        Task<Guid> Register(RegisterDto user);
     }
 }
 

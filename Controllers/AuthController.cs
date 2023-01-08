@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ScannedAPI.Dtos.AuthDtos;
 using ScannedAPI.Helpers;
 using ScannedAPI.Models;
-using ScannedAPI.Services.Interfaces;
 
 namespace ScannedAPI.Controllers
 {
@@ -14,15 +12,14 @@ namespace ScannedAPI.Controllers
     [Route("auth")]
     public class AuthController : CommonApiController
     {
-        private readonly IAuthService _authService;
         private readonly JwtSettings _jwtSettings;
 
-        public AuthController(IAuthService authService, JwtSettings jwtSettings)
+        public AuthController(JwtSettings jwtSettings)
         {
-            _authService = authService;
             _jwtSettings = jwtSettings;
         }
 
+        /*
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Post([FromBody] LoginDto dto)
@@ -47,7 +44,7 @@ namespace ScannedAPI.Controllers
             {
                 return BadRequest(e.Message);
             }
-        }
+        }*/
     }
 }
 

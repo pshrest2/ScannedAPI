@@ -21,7 +21,6 @@ using ScannedAPI.Services.Interfaces;
 using ScannedAPI.SignalR;
 using System;
 using System.Threading.Tasks;
-using ScannedAPI.Extensions;
 
 namespace ScannedAPI
 {
@@ -65,9 +64,11 @@ namespace ScannedAPI
             {
                 opt.AddPolicy(MyAllowSpecificOrigins, policy =>
                 {
-                    policy.AllowAnyOrigin()
+                    policy
+                    .WithOrigins("http://localhost:3000", "https://scannly.azurewebsites.net")
+                    .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .AllowAnyHeader();
+                    .AllowCredentials();
                 });
             });
 
@@ -89,7 +90,6 @@ namespace ScannedAPI
             services.AddRabbitConsumer(rabbitConfig);
             services.AddHostedService<UploadImageService>();
             services.AddSignalR();
-            services.AddJWTTokenServices(Configuration);
 
             // singleton
             services.AddSingleton(mapper);
@@ -101,7 +101,6 @@ namespace ScannedAPI
 
             // transient
             services.AddTransient<IUsersService, UsersService>();
-            services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IUsersRepository, UsersRepository>();
 
         }
@@ -119,10 +118,6 @@ namespace ScannedAPI
             app.UseRouting();
 
             app.UseCors(MyAllowSpecificOrigins);
-
-            app.UseAuthentication();
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
