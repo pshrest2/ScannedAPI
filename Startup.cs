@@ -65,10 +65,9 @@ namespace ScannedAPI
             {
                 opt.AddPolicy(MyAllowSpecificOrigins, policy =>
                 {
-                    policy.WithOrigins("http://localhost:3000", "http://localhost:3001", "https://scannly.azurewebsites.net")
+                    policy.AllowAnyOrigin()
                     .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials();
+                    .AllowAnyHeader();
                 });
             });
 
