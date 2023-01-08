@@ -11,7 +11,7 @@ using ScannedAPI.Services.Interfaces;
 
 namespace ScannedAPI.Controllers
 {
-    [Route("api/users")]
+    [Route("users")]
     public class UsersController : CommonApiController
     {
         private readonly IUsersService _usersService;

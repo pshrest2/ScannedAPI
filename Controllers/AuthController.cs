@@ -11,7 +11,7 @@ using ScannedAPI.Services.Interfaces;
 namespace ScannedAPI.Controllers
 {
     [AllowAnonymous]
-    [Route("api/auth")]
+    [Route("auth")]
     public class AuthController : CommonApiController
     {
         private readonly IAuthService _authService;
