@@ -5,7 +5,7 @@ namespace ScannedAPI.Helpers
 {
     public static class JsonSerializer
     {
-        private static JsonSerializerSettings settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
+        private readonly static JsonSerializerSettings settings = new() { TypeNameHandling = TypeNameHandling.All };
 
         public static byte[] Serialize(object data)
         {

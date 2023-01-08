@@ -33,7 +33,7 @@ namespace ScannedAPI
         }
 
         public IConfiguration Configuration { get; }
-        private static string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+        private static readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 
         // Creates a Cosmos DB database and a container with the specified partition key. 
@@ -65,7 +65,7 @@ namespace ScannedAPI
             {
                 opt.AddPolicy(MyAllowSpecificOrigins, policy =>
                 {
-                    policy.WithOrigins("http://localhost:3000", "http://localhost:3001", "https://receiptimages.z13.web.core.windows.net")
+                    policy.WithOrigins("http://localhost:3000", "http://localhost:3001", "https://scannly.azurewebsites.net")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials();

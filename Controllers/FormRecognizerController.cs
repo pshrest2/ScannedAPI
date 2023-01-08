@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace ScannedAPI.Controllers
 {
-    [Authorize]
     [Route("api/form-recognizer")]
     public class FormRecognizerController : CommonApiController
     {

@@ -43,7 +43,7 @@ namespace ScannedAPI.Repositories.Context
         public async Task<IEnumerable<ScannlyItem>> GetItemsAsync(string queryString)
         {
             var query = _container.GetItemQueryIterator<ScannlyItem>(new QueryDefinition(queryString));
-            List<ScannlyItem> results = new List<ScannlyItem>();
+            var results = new List<ScannlyItem>();
             while (query.HasMoreResults)
             {
                 var response = await query.ReadNextAsync();

@@ -28,7 +28,7 @@ namespace ScannedAPI.Helpers
         {
             try
             {
-                if (model == null) throw new ArgumentException(nameof(model));
+                if (model == null) throw new ArgumentException(null, nameof(model));
                 // Get secret key
                 var key = System.Text.Encoding.ASCII.GetBytes(jwtSettings.IssuerSigningKey);
                 Guid Id = Guid.Empty;
